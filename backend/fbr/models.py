@@ -33,6 +33,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     bio = models.TextField(blank=True, null=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    elo = models.IntegerField(default=0)
 
     objects = CustomUserManager()
 
