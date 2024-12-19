@@ -77,12 +77,6 @@ def game_detail(request, id):
 
 
 
-
-
-
-
-
-
 # Création d'un utilisateur
 class RegisterView(APIView):
     def post(self, request):

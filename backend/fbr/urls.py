@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from .views import RegisterView, LoginView, CreateGameView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     # Routes pour les utilisateurs
@@ -18,5 +19,9 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),  # Création d'un utilisateur
     path('login/', LoginView.as_view(), name='login'),           # Connexion d'un utilisateur
     path('games/create/', CreateGameView.as_view(), name='create_game'),  # Création d'une partie
+
+    # JWT Authentication
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Obtenir un token
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), # Rafraîchir un token
     
 ]
