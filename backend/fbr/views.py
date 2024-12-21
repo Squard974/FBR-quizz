@@ -10,6 +10,8 @@ from django.contrib.auth import authenticate
 from .serializers import GameSerializer, CustomUserSerializer
 from django.db.utils import IntegrityError
 
+from rest_framework_simplejwt.tokens import RefreshToken
+
 #get all users
 def user_list(request):
     users = CustomUser.objects.all()
@@ -31,6 +33,25 @@ def user_detail(request, id):
     }
     return JsonResponse(data)
 
+
+def top_players_ladder(request):
+    # Récupérer les 10 joueurs avec le plus d'elo
+    top_players = CustomUser.objects.filter(is_active=True).order_by('-elo')[:10]
+
+    # Préparer les données pour le JSON
+    data = [
+        {
+            "id": player.id,
+            "username": player.username,
+            "elo": player.elo,
+            "avatar_url": player.avatar.url if player.avatar else None,
+            "date_joined": player.date_joined,
+        }
+        for player in top_players
+    ]
+    return JsonResponse(data, safe=False)
+
+
 #get all all athletes
 def athlete_list(request):
     athletes = Athlete.objects.all()
@@ -50,6 +71,37 @@ def athlete_detail(request, id):
         "age": athlete.age,
     }
     return JsonResponse(data)
+
+
+def random_athletes_by_sport(request, sport):
+    # Récupérer tous les athlètes du sport spécifié
+    athletes = Athlete.objects.filter(sport=sport)
+
+    # Si moins de 10 athlètes disponibles, tous les retourner
+    if athletes.count() <= 10:
+        selected_athletes = athletes
+    else:
+        # Sinon, choisir 10 athlètes aléatoires
+        athlete_ids = list(athletes.values_list('id', flat=True))
+        random_ids = random.sample(athlete_ids, 10)
+        selected_athletes = athletes.filter(id__in=random_ids)
+
+    # Préparer les données pour le JSON
+    data = [
+        {
+            "id": athlete.id,
+            "name": athlete.name,
+            "sport": athlete.sport,
+            "nationality": athlete.nationality,
+            "team": athlete.team,
+            "position": athlete.position,
+            "age": athlete.age,
+            "photo_url": athlete.photo.url if athlete.photo else None,
+        }
+        for athlete in selected_athletes
+    ]
+    return JsonResponse(data, safe=False)
+
 
 #get all games
 def game_list(request):
@@ -111,12 +163,18 @@ class LoginView(APIView):
         if not email or not password:
             return Response({"error": "Email et password sont requis."}, status=status.HTTP_400_BAD_REQUEST)
         
+        # Authentifier l'utilisateur
         user = authenticate(request, email=email, password=password)
         if user is not None:
-            return Response({"message": "Connexion réussie."}, status=status.HTTP_200_OK)
+            # Générer un token JWT
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                "message": "Connexion réussie.",
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+            }, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Identifiants invalides."}, status=status.HTTP_401_UNAUTHORIZED)
-
 
 # Création d'une partie
 class CreateGameView(APIView):

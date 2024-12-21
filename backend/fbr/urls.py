@@ -7,6 +7,8 @@ urlpatterns = [
     # Routes pour les utilisateurs
     path('users/', views.user_list, name='user_list'),
     path('users/<int:id>/', views.user_detail, name='user_detail'),
+    path('ladder/', views.top_players_ladder, name='top_players_ladder'), # Obtenir les 10 meilleurs joueurs selon l'elo
+
 
     # Routes pour les parties
     path('games/', views.game_list, name='game_list'),
@@ -15,6 +17,8 @@ urlpatterns = [
     # Routes pour les sportifs
     path('athletes/', views.athlete_list, name='athlete_list'),  # Lister les sportifs
     path('athletes/<int:id>/', views.athlete_detail, name='athlete_detail'),  # Détails d'un sportif
+    path('athletes/random/<str:sport>/', views.random_athletes_by_sport, name='random_athletes_by_sport'), # Obtenir 10 sportifs aléatoires selon le sport
+
 
     path('register/', RegisterView.as_view(), name='register'),  # Création d'un utilisateur
     path('login/', LoginView.as_view(), name='login'),           # Connexion d'un utilisateur

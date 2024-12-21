@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-c^vpsbhs1p&$hzqwsn19l+b4fw&r+@o+gwh=ks0)%c=cdjg%a5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']  # Pour accepter toutes les connexions (en développement)
+
 
 
 # Application definition
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',  # Pour gérer les tokens expirés (optionnel)
     'fbr',
+    'corsheaders',
     
 ]
 
@@ -68,7 +70,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+     'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'fbr_quizz.urls'
 
