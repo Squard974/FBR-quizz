@@ -1,0 +1,11 @@
+*.pyc
+__pycache__/
+env/
+.env
+db.sqlite3
+
+node_modules/
+ios/
+android/
+*.log
+.expo/
